@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model T_Student_STD {
+  STD_id Int @id @default(autoincrement())
+  STD_name String
+  STD_surname String
+  group T_Groups_GRP @relation(fields: [STD_REF_GRP], references: [GRP_gid])
+  STD_REF_GRP Int
+  
+  T_Disponibilities_DSP T_Disponibilities_DSP[]
+}
+
+model T_Groups_GRP {
+  GRP_gid Int @id @default(autoincrement())
+  GRP_name String
+  GRP_level Int
+
+  T_Student_STD T_Student_STD[]
+}
+
+model T_Disponibilities_DSP {
+  DSP_rid Int @id @default(autoincrement())
+  student T_Student_STD @relation(fields: [DSP_REF_STD], references: [STD_id])
+  DSP_REF_STD Int
+  DSP_monday1 Int
+  DSP_monday2 Int
+  DSP_monday3 Int
+  DSP_monday4 Int
+  DSP_monday5 Int
+  DSP_monday6 Int
+  DSP_monday7 Int
+  DSP_monday8 Int
+  DSP_tuesday1 Int
+  DSP_tuesday2 Int
+  DSP_tuesday3 Int
+  DSP_tuesday4 Int
+  DSP_tuesday5 Int
+  DSP_tuesday6 Int
+  DSP_tuesday7 Int
+  DSP_tuesday8 Int
+  DSP_wednesday1 Int
+  DSP_wednesday2 Int
+  DSP_wednesday3 Int
+  DSP_wednesday4 Int
+  DSP_thursday1 Int
+  DSP_thursday2 Int
+  DSP_thursday3 Int
+  DSP_thursday4 Int
+  DSP_thursday5 Int
+  DSP_thursday6 Int
+  DSP_thursday7 Int
+  DSP_thursday8 Int
+  DSP_friday1 Int
+  DSP_friday2 Int
+  DSP_friday3 Int
+  DSP_friday4 Int
+  DSP_friday5 Int
+  DSP_friday6 Int
+  DSP_friday7 Int
+  DSP_friday8 Int
+}
