@@ -14,7 +14,7 @@ model T_Student_STD {
   STD_id Int @id @default(autoincrement())
   STD_name String
   STD_surname String
-  group T_Groups_GRP @relation(fields: [STD_REF_GRP], references: [GRP_gid])
+  group T_Groups_GRP @relation(fields: [STD_REF_GRP], references: [GRP_gid], onDelete: Cascade)
   STD_REF_GRP Int
   
   T_Disponibilities_DSP T_Disponibilities_DSP[]
@@ -30,7 +30,7 @@ model T_Groups_GRP {
 
 model T_Disponibilities_DSP {
   DSP_rid Int @id @default(autoincrement())
-  student T_Student_STD @relation(fields: [DSP_REF_STD], references: [STD_id])
+  student T_Student_STD @relation(fields: [DSP_REF_STD], references: [STD_id], onDelete: Cascade)
   DSP_REF_STD Int
   DSP_monday1 Int
   DSP_monday2 Int
