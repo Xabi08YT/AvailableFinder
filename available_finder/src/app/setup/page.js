@@ -1,4 +1,5 @@
 "use client"
+//UI Components
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Table,
@@ -19,23 +20,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+// Technical components
 import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast"
+
+// Icons
 import { PlusCircle, Trash } from "lucide-react";
 
 export default function Setup() {
     const [groups, setGroups] = useState(null);
     const [groupNames, setGroupNames] = useState(null);
     const [needRefresh, setNeedRefresh] = useState(false);
+    const { toast } = useToast();
 
+    // Wrappers
     let addGroupWrapper = () => {
-        addGroup(groups, setGroups, setNeedRefresh,groupNames,setGroupNames);
+        addGroup(groups, setGroups, setNeedRefresh,groupNames,setGroupNames, toast);
     }
 
     let deleteGroupWrapper = (i) => {
-        console.log("hey")
-        deleteGroup(groups, setGroups, setNeedRefresh, i);
+        deleteGroup(groups, setGroups, setNeedRefresh, i,groupNames,setGroupNames, toast);
     }
 
+    // Self-refresh
     useEffect(() => {
         setNeedRefresh(false);
     }, [needRefresh])
@@ -112,26 +119,71 @@ export default function Setup() {
     </main>);
 }
 
-let addGroup = (groups, setGroups, setNeedRefresh) => {
+let addGroup = (groups, setGroups, setNeedRefresh, groupNames, setGroupNames, toast) => {
+    // Avoiding any issues with null..
     if(groups == null) {
         groups = [];
     }
+
+    if(groupNames == null) {
+        groupNames = [];
+    }
+
+    // Preparing local variables to update everything locally
     const allGroups = groups;
+    const allGroupNames = groupNames;
+
+    // Retreiving information given by the user
     let newGroup;
     newGroup = {
         level: document.getElementById("level")?.value,
         name: document.getElementById("name")?.value
     };
+
+    // If the same group has already been added, stopping everything
+    if(groupNames.includes(newGroup.name)) {
+        return toast({
+            title: "La classe n'a pas pu être ajouté.",
+            description: `La classe ${newGroup.name} n'a pas pu être ajoutée car une classe du même nom existe déjà.`,
+            variant: "destructive"
+        })
+    }
+
+    // Adding group to the list containing all groups
     allGroups.push(newGroup);
     setGroups(allGroups);
+
+    //Marking this group name as already taken
+    allGroupNames.push(newGroup.name);
+    setGroupNames(allGroupNames);
+
+    //Asking for refresh and telling user that everything went well
     setNeedRefresh(true);
+    toast({
+        title: "Classe ajoutée avec succès.",
+        description: `La classe ${newGroup.name} avec ${newGroup.level} années avant le bac à été ajoutée avec succès.`
+    })
 }
 
-let deleteGroup = (groups, setGroups, setNeedRefresh, i) => {
+let deleteGroup = (groups, setGroups, setNeedRefresh, i, groupNames, setGroupNames, toast) => {
     const allGroups = groups;
-    console.log(i)
+    const allGroupNames = groupNames;
+
+    // Retreiving groupName for user feedback
+    let oldGroup  = allGroups[i];
+
+    // Removing from lists
     allGroups.splice(i,1);
-    console.log(allGroups);
+    allGroupNames.splice(i,1);
+
+    // Applying changes
     setGroups(allGroups);
+    setGroupNames(allGroupNames);
+
+    // Asking for refresh + user feedback
     setNeedRefresh(true);
+    toast({
+        title: "Classe supprimée avec succès.",
+        description: `La classe ${oldGroup.name} avec ${oldGroup.level} années avant le bac à été supprimée avec succès.`
+    })
 }
